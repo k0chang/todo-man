@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bgcolor: #000090;
+  --font: #70fff7;
+}
+
+::-moz-selection {
+  background-color: var(--font);
+  color: var(--bgcolor);
+}
+
+::selection {
+  background-color: var(--font);
+  color: var(--bgcolor);
+}
+
+body {
+  margin: 0;
+  font-family: Courier New, monospace, Yu-Gothic, sans-serif;
+  background-color: var(--bgcolor);
+  color: var(--font);
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 38px;
+  font-weight: 600;
+}
+h2 {
+  font-size: 34px;
+  font-weight: 600;
+}
+
+input {
+  padding: 6px 7px;
+  color: var(--bgcolor);
+  background-color: var(--font);
+}
+input::-moz-selection {
+  background-color: var(--bgcolor);
+  color: var(--font);
+}
+input::selection {
+  background-color: var(--bgcolor);
+  color: var(--font);
+}
