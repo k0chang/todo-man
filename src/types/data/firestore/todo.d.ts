@@ -1,6 +1,4 @@
-import { User } from "firebase/auth";
-
-export type AuthState = { user: User | null };
+import { Timestamp } from "firebase/firestore";
 
 export type Todo = {
   id?: string;

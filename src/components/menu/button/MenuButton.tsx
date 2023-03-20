@@ -1,15 +1,9 @@
-import { User } from "firebase/auth";
-import { Dispatch, SetStateAction } from "react";
-
-interface MenuButton {
-  user: User | null | undefined;
-  menuOpenState: [boolean, Dispatch<SetStateAction<boolean>>];
-}
+import { MenuButtonT } from "../../../types/props/menu/menuButton";
 
 export default function MenuButton({
   user,
   menuOpenState: [isMenuOpen, setIsMenuOpen],
-}: MenuButton) {
+}: MenuButtonT) {
   return (
     <button
       className={`mt-3 ml-8 relative ${

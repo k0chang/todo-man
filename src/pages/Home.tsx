@@ -1,9 +1,10 @@
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../lib/firebase";
+import { firebaseValidateFormByErrorCode } from "../utils/firebase/formvalidate";
 
 export default function Home() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -11,27 +12,12 @@ export default function Home() {
   const { email, password } = form;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setError(null), 5000);
-    return () => clearTimeout(timeout);
-  }, [error]);
-
-  const setFormErr = (code: string) => {
-    switch (code) {
-      case "auth/wrong-password":
-      case "auth/user-not-found":
-        return "Make sure you have entered the correct email address or password.";
-      case "auth/invalid-email":
-        return "Enter the vaild email address.";
-      case "auth/weak-password":
-        return "Password must be at least 6 characters long.";
-      default:
-        return "An error occurred. Please try again later.";
-    }
-  };
-
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      setError("Enter your email and password.");
+      return;
+    }
     const userCredential = async () =>
       await signInWithEmailAndPassword(auth, email, password);
     try {
@@ -40,8 +26,7 @@ export default function Home() {
       await setDoc(doc(collection(db, "users"), uid), { todos: [] });
     } catch {
       await userCredential().catch((e: FirebaseError) => {
-        setError(setFormErr(e.code));
-        if (!email || !password) setError("Enter your email and password.");
+        setError(firebaseValidateFormByErrorCode(e.code));
       });
     }
   };

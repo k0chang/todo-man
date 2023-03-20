@@ -1,14 +1,10 @@
 import { format } from "date-fns";
 import { doc, updateDoc } from "firebase/firestore";
-import { useAuthContext } from "../../features/auth/provider/AuthProvider";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { db } from "../../lib/firebase";
-import { Todo } from "../../types/firebase";
+import { Finished } from "../../types/props/todos/finished";
 
-interface FinishedTodo {
-  todo: Todo;
-}
-
-export default function FinishedTodo({ todo }: FinishedTodo) {
+export default function FinishedTodo({ todo }: Finished) {
   const { name, updatedAt } = todo;
   const { user } = useAuthContext();
   const handleMakeUnfinished = (id?: string) => {

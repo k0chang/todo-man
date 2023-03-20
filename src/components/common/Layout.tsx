@@ -1,20 +1,18 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
-import { useAuthContext } from "../../features/auth/provider/AuthProvider";
-import MenuButton from "../menu/button/MenuButton";
-import MenuContents from "../menu/contents/MenuContents";
-import { LoginButton, LogoutButton } from "./button/Button";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import Menu from "../menu/Menu";
+import LoginButton from "./button/LoginButton";
+import { LogoutButton } from "./button/LogoutButton";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const { user } = useAuthContext();
 
   return (
     <>
       <div className={`relative mt-8 h-[120px] w-full flex`}>
-        <MenuButton user={user} menuOpenState={[isMenuOpen, setIsMenuOpen]} />
-        <MenuContents user={user} open={isMenuOpen} />
+        <Menu user={user} />
         <LogoutButton show={!!user || !["/", "/signup"].includes(pathname)} />
         <LoginButton show={!!!user} />
       </div>

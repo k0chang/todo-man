@@ -1,14 +1,10 @@
 import { format } from "date-fns";
 import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import { useAuthContext } from "../../features/auth/provider/AuthProvider";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { db } from "../../lib/firebase";
-import { Todo } from "../../types/firebase";
+import { Unfinished } from "../../types/props/todos/unfinished";
 
-interface UnfinishedTodo {
-  todo: Todo;
-}
-
-export default function UnfinishedTodo({ todo }: UnfinishedTodo) {
+export default function UnfinishedTodo({ todo }: Unfinished) {
   const { name, createdAt } = todo;
   const { user } = useAuthContext();
   const handleTaskDelete = (_id?: string) => {

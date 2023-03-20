@@ -7,7 +7,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import Editor from "../components/profile/Editor";
-import { useAuthContext } from "../features/auth/provider/AuthProvider";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Profile() {
   const { user } = useAuthContext();

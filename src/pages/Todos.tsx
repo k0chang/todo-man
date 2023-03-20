@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import FinishedTodo from "../components/todo/FinishedTodo";
 import NewTaskForm from "../components/todo/form/NewTaskForm";
 import UnfinishedTodo from "../components/todo/UnfinishedTodo";
-import { useAuthContext } from "../features/auth/provider/AuthProvider";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { db } from "../lib/firebase";
-import { Todo } from "../types/firebase";
+import { Todo } from "../types/data/firestore/todo";
 
 export default function Todos() {
   const [todos, setTodos] = useState<Todo[]>([]);

@@ -1,15 +1,10 @@
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
-import { useAuthContext } from "../../../features/auth/provider/AuthProvider";
+import { FormEvent, useState } from "react";
+import { useAuthContext } from "../../../hooks/useAuthContext";
 import { db } from "../../../lib/firebase";
-import { Todo } from "../../../types/firebase";
+import { NewTaskFormT } from "../../../types/props/todos/newTaskForm";
 
-interface NewTaskForm {
-  setWarn: Dispatch<SetStateAction<string | null>>;
-  todos: Todo[];
-}
-
-export default function NewTaskForm({ setWarn, todos }: NewTaskForm) {
+export default function NewTaskForm({ setWarn }: NewTaskFormT) {
   const [newTodo, setNewTodo] = useState<string | null>(null);
   const { user } = useAuthContext();
   const handleTaskSubmit = async (e: FormEvent) => {

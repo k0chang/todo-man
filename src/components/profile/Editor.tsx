@@ -2,19 +2,13 @@ import { FirebaseError } from "firebase/app";
 import { updateProfile } from "firebase/auth";
 import { FormEvent } from "react";
 import { auth } from "../../lib/firebase";
-import { UseStateType } from "../../types/state";
-
-interface Editor {
-  usernameState: UseStateType<string>;
-  editorOpenState: UseStateType<boolean>;
-  warnState: UseStateType<string>;
-}
+import { EditorT } from "../../types/props/profile/editor";
 
 export default function Editor({
   usernameState: [username, setUsername],
   editorOpenState: [isEditorOpen, setIsEditorOpen],
   warnState: [warn, setWarn],
-}: Editor) {
+}: EditorT) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!username) {

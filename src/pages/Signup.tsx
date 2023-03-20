@@ -1,5 +1,5 @@
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -13,25 +13,19 @@ export default function Signup() {
     watch,
     formState: { errors },
   } = useForm({ defaultValues: { email: "", password: "" } });
-  const [formValues, setFormValues] = useState({ email: "", password: "" });
-  // const { email, password } = formValues;s
   const [email, password] = [watch("email"), watch("password")];
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const onSubmit = async (data: FieldValues) => {
-    const userCredential = createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const uid = (await userCredential).user.uid;
-    await userCredential
-      .then(async (uc: UserCredential) => {
-        await setDoc(doc(collection(db, "users"), uid), { todos: [] });
-        navigate("/signup/name");
-      })
-      .catch((e: FirebaseError) => {
+    const userCredential = async () =>
+      await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const uid = (await userCredential()).user.uid;
+      await setDoc(doc(collection(db, "users"), uid), { todos: [] });
+      navigate("/signup/name");
+    } catch {
+      await userCredential().catch((e: FirebaseError) => {
         setError(e.code);
         switch (e.code) {
           case "auth/weak-password":
@@ -42,6 +36,7 @@ export default function Signup() {
         }
         if (!email || !password) setError("Enter new email and password.");
       });
+    }
   };
 
   return (
@@ -60,9 +55,6 @@ export default function Signup() {
           className={`w-full mt-5 mb-2 border-2 border-transparent focus:border-[#fffb85]`}
           type='email'
           placeholder='user@example.com'
-          // onChange={e =>
-          //   setFormValues({ ...formValues, email: e.target.value })
-          // }
         />
         <p className='text-red-500'>{errors.email?.message}</p>
         <input
@@ -75,9 +67,6 @@ export default function Signup() {
           className={`w-full mt-5 mb-2 border-2 border-transparent focus:border-[#fffb85]`}
           type='password'
           placeholder='Password'
-          // onChange={e =>
-          //   setFormValues({ ...formValues, password: e.target.value })
-          // }
         />
         <p className='text-red-500'>{errors.password?.message}</p>
         <button
