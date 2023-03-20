@@ -17,7 +17,12 @@
   color: var(--bgcolor);
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
+  width: 100vw;
   margin: 0;
   font-family: Courier New, monospace, Yu-Gothic, sans-serif;
   background-color: var(--bgcolor);
@@ -33,6 +38,13 @@ h2 {
   font-size: 34px;
   font-weight: 600;
 }
+h3 {
+  font-size: 26px;
+  font-weight: 600;
+}
+p {
+  padding: 0;
+}
 
 input {
   padding: 6px 7px;
@@ -46,4 +58,7 @@ input::-moz-selection {
 input::selection {
   background-color: var(--bgcolor);
   color: var(--font);
+}
+input:focus {
+  outline: none;
 }

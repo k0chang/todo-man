@@ -1,53 +1,67 @@
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FormEvent, useState } from "react";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState<string | null>(null);
+  const { email, password } = form;
   const navigate = useNavigate();
 
-  const handleLogin = (e: FormEvent) => {
-    e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then(uc => {
-        navigate("/todos");
-      })
-      .catch((e: FirebaseError) => {
-        setError(e.code);
-        switch (e.code) {
-          case "auth/wrong-password":
-          case "auth/user-not-found":
-            setError(
-              "Make sure you have entered the correct email address or password."
-            );
-            break;
-          case "auth/invalid-email":
-            setError("Enter the vaild email address.");
-            break;
-        }
-        if (!email && !password) setError("Enter your email and password.");
-      });
+  useEffect(() => {
+    const timeout = setTimeout(() => setError(null), 5000);
+    return () => clearTimeout(timeout);
+  }, [error]);
+
+  const setFormErr = (code: string) => {
+    switch (code) {
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+        return "Make sure you have entered the correct email address or password.";
+      case "auth/invalid-email":
+        return "Enter the vaild email address.";
+      case "auth/weak-password":
+        return "Password must be at least 6 characters long.";
+      default:
+        return "An error occurred. Please try again later.";
+    }
   };
+
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    const userCredential = async () =>
+      await signInWithEmailAndPassword(auth, email, password);
+    try {
+      const uid = (await userCredential()).user.uid;
+      navigate("/todos");
+      await setDoc(doc(collection(db, "users"), uid), { todos: [] });
+    } catch {
+      await userCredential().catch((e: FirebaseError) => {
+        setError(setFormErr(e.code));
+        if (!email || !password) setError("Enter your email and password.");
+      });
+    }
+  };
+
   return (
     <>
       <h1 className='text-center mb-6'>Todo Man</h1>
       <p className='text-red-500'>{error && error}</p>
       <form onSubmit={handleLogin}>
         <input
-          className={`w-full my-5 border-2 border-transparent focus:outline-none focus:border-[#fffb85]`}
+          className={`w-full my-5 border-2 border-transparent focus:border-[#fffb85]`}
           type='email'
           placeholder='Email'
-          onChange={e => setEmail(e.target.value)}
+          onChange={e => setForm({ ...form, email: e.target.value })}
         />
         <input
-          className={`w-full my-5 border-2 border-transparent focus:outline-none focus:border-[#fffb85]`}
+          className={`w-full my-5 border-2 border-transparent focus:border-[#fffb85]`}
           type='password'
           placeholder='Password'
-          onChange={e => setPassword(e.target.value)}
+          onChange={e => setForm({ ...form, password: e.target.value })}
         />
         <div className='text-right'>
           <a className='' href='/forgotpassword'>
