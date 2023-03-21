@@ -34,8 +34,8 @@ export default function Home() {
   return (
     <>
       <h1 className='text-center mb-6'>Todo Man</h1>
-      <p className='text-red-500'>{error && error}</p>
-      <form onSubmit={handleLogin}>
+      <p className={`text-red-500 ${!!error ? "" : "hidden"}`}>{error}</p>
+      <form onSubmit={handleLogin} noValidate>
         <input
           className={`w-full my-5 border-2 border-transparent focus:border-[#fffb85]`}
           type='email'
@@ -49,7 +49,7 @@ export default function Home() {
           onChange={e => setForm({ ...form, password: e.target.value })}
         />
         <div className='text-right'>
-          <a className='' href='/forgotpassword'>
+          <a className='' href='/forgot'>
             Forgot password?
           </a>
         </div>

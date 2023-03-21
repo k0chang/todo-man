@@ -38,7 +38,7 @@ export default function Editor({
       <div className='w-[87%] mx-auto my-4'>
         <h3 className='text-center mb-5'>Change profile?</h3>
         <p className='text-yellow-300'>{warn}</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <label htmlFor='username'>User name</label>
           <input
             id='username'

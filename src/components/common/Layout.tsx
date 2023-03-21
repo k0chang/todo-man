@@ -13,7 +13,11 @@ export default function Layout({ children }: { children: ReactNode }) {
     <>
       <div className={`relative mt-8 h-[120px] w-full flex`}>
         <Menu user={user} />
-        <LogoutButton show={!!user || !["/", "/signup"].includes(pathname)} />
+        <LogoutButton
+          show={
+            !!user || !["/", "/signup", "/forgot", "/exit"].includes(pathname)
+          }
+        />
         <LoginButton show={!!!user} />
       </div>
       <div className='w-full h-screen flex justify-center items-center'>

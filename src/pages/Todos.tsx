@@ -50,8 +50,12 @@ export default function Todos() {
       return dateB.getTime() - dateA.getTime();
     })
     .reverse();
+
   if (!user) {
     return <h2>To manage tasks, first log in!</h2>;
+  }
+  if (!user.emailVerified) {
+    return <h2>First confirm email address.</h2>;
   }
   return (
     <>
@@ -60,7 +64,7 @@ export default function Todos() {
       <NewTaskForm setWarn={setWarn} todos={todos} />
       <div className='mt-8'>
         <h3>Unfinished tasks</h3>
-        <ul className='bg-[var(--font)] text-[var(--bgcolor)]'>
+        <ul className='bg-[var(--font)] text-[var(--bgcolor)] selection:bg-[var(--bgcolor)] selection:text-[var(--font)]'>
           {unfinishedTodos.length === 0 && (
             <p className='p-2'>Looks like you haven't added any tasks yet.</p>
           )}
@@ -71,7 +75,7 @@ export default function Todos() {
       </div>
       <div className='mt-10'>
         <h3>Finished tasks</h3>
-        <ul className='bg-[var(--font)] text-[var(--bgcolor)]'>
+        <ul className='bg-[var(--font)] text-[var(--bgcolor)] selection:bg-[var(--bgcolor)] selection:text-[var(--font)]'>
           {finishedTodos.length === 0 && (
             <p className='p-2'>Any tasks seem to have been finished.</p>
           )}

@@ -1,5 +1,9 @@
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -17,40 +21,58 @@ export default function Signup() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const pattern = {
+    email: {
+      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      message: "Invalid email address.",
+    },
+    password: {
+      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d.?\-+]{8,32}$/,
+      message:
+        "Passwords must contain uppercase, lowercase and numbers must be included.  A total of at least 8 and no more than 32 characters. Also symbols are available: .?-+",
+    },
+  };
+
   const onSubmit = async (data: FieldValues) => {
-    const userCredential = async () =>
-      await createUserWithEmailAndPassword(auth, email, password);
+    if (!email || !password) {
+      setError("Enter new email and password.");
+      return;
+    }
     try {
-      const uid = (await userCredential()).user.uid;
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      if (!user.user.emailVerified) {
+        await sendEmailVerification(user.user);
+        navigate("/signup/sent-email");
+      }
+      const uid = user.user.uid;
       await setDoc(doc(collection(db, "users"), uid), { todos: [] });
-      navigate("/signup/name");
-    } catch {
-      await userCredential().catch((e: FirebaseError) => {
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        console.error(e);
         setError(e.code);
         switch (e.code) {
           case "auth/weak-password":
             setError("Password must be at least 6 characters long.");
             break;
-          case "auth/invalid-email":
-            setError("Please enter valid email address.");
+          case "auth/email-already-in-use":
+            setError("This email is already in use.");
+            break;
         }
-        if (!email || !password) setError("Enter new email and password.");
-      });
+      }
     }
   };
-
   return (
     <>
       <h1 className='text-center mb-6'>
         Create your new <span className='text-[#fffb85]'>TodoMan</span> account!
       </h1>
       <p className='text-red-500'>{error}</p>
-      <form onSubmit={handleSubmit(onSubmit, onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onSubmit)} noValidate>
         <input
           {...register("email", {
             required: true,
-            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            minLength: { value: 5, message: `At least 5 characters required.` },
+            pattern: pattern.email,
           })}
           className={`w-full mt-5 mb-2 border-2 border-transparent focus:border-[#fffb85]`}
           type='email'
@@ -60,8 +82,7 @@ export default function Signup() {
         <input
           {...register("password", {
             required: true,
-            pattern:
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.?\-+/])[a-zA-Z\d.?\-+/]{8,25}$/,
+            pattern: pattern.password,
             minLength: { value: 6, message: `At least 6 characters required.` },
           })}
           className={`w-full mt-5 mb-2 border-2 border-transparent focus:border-[#fffb85]`}

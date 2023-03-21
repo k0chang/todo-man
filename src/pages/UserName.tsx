@@ -17,7 +17,7 @@ export default function UserName() {
     }
     updateProfile(auth.currentUser!, { displayName: name })
       .then(() => {
-        navigate("/");
+        navigate("/todos");
       })
       .catch((error: FirebaseError) => {
         setError("Error occured.");

@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import AccountDeleteModal from "../components/profile/AccountDeleteModal";
 import Editor from "../components/profile/Editor";
 import { useAuthContext } from "../hooks/useAuthContext";
 
@@ -14,6 +15,8 @@ export default function Profile() {
   const [username, setUsername] = useState(user?.displayName ?? "");
   const [warn, setWarn] = useState("");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] =
+    useState(false);
 
   useEffect(() => {
     setUsername(user?.displayName ?? "");
@@ -58,15 +61,25 @@ export default function Profile() {
           <FontAwesomeIcon icon={faHandPointLeft} /> Back to TODO Man
         </a>
       </div>
+      <div className='w-full flex justify-end'>
+        <button
+          className='outline-none focus:border-[#ff47f9] hover:border-[#ff47f9] p-2 border-[1px] border-[var(--danger)] text-[var(--danger)] mt-[79px] mb-5'
+          onClick={() => setIsAccountDeleteModalOpen(true)}>
+          Delete account
+        </button>
+      </div>
       <div
         className={`${
-          isEditorOpen ? "fixed" : "hidden"
+          isEditorOpen || isAccountDeleteModalOpen ? "fixed" : "hidden"
         } editor-modal top-0 left-0 w-screen h-screen bg-[#1be8ff69]`}
       />
       <Editor
         usernameState={[username, setUsername]}
         editorOpenState={[isEditorOpen, setIsEditorOpen]}
         warnState={[warn, setWarn]}
+      />
+      <AccountDeleteModal
+        openState={[isAccountDeleteModalOpen, setIsAccountDeleteModalOpen]}
       />
     </>
   );

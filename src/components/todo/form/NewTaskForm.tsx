@@ -24,7 +24,10 @@ export default function NewTaskForm({ setWarn }: NewTaskFormT) {
       .catch();
   };
   return (
-    <form className='w-full flex justify-between' onSubmit={handleTaskSubmit}>
+    <form
+      className='w-full flex justify-between'
+      onSubmit={handleTaskSubmit}
+      noValidate>
       <input
         className='w-[67%]'
         type='text'

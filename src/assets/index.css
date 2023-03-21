@@ -5,6 +5,7 @@
 :root {
   --bgcolor: #000090;
   --font: #70fff7;
+  --danger: #ff2575;
 }
 
 ::-moz-selection {
