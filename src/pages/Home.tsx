@@ -2,15 +2,15 @@ import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { auth, db } from "../lib/firebase";
 import { firebaseValidateFormByErrorCode } from "../utils/firebase/formvalidate";
+import { useViewTransition } from "../utils/transition/useViewTransition";
 
 export default function Home() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const { email, password } = form;
-  const navigate = useNavigate();
+  const viewTransition = useViewTransition();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ export default function Home() {
       await signInWithEmailAndPassword(auth, email, password);
     try {
       const uid = (await userCredential()).user.uid;
-      navigate("/todos");
+      viewTransition("/todos");
       await setDoc(doc(collection(db, "users"), uid), { todos: [] });
     } catch {
       await userCredential().catch((e: FirebaseError) => {
@@ -60,11 +60,11 @@ export default function Home() {
         </button>
       </form>
       <p className='text-center'>or</p>
-      <a
-        href='/signup'
-        className='py-3 px-5 my-2 w-fit mx-auto block bg-[#fffb85] text-[var(--bgcolor)] hover:bg-[var(--font)] hover:tracking-[1px] transition-all duration-150'>
+      <button
+        className='py-3 px-5 my-2 w-fit mx-auto block bg-[#fffb85] text-[var(--bgcolor)] hover:bg-[var(--font)] hover:tracking-[1px] transition-all duration-150'
+        onClick={() => viewTransition("/signup")}>
         Signup
-      </a>
+      </button>
     </>
   );
 }

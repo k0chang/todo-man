@@ -1,13 +1,13 @@
 import { FirebaseError } from "firebase/app";
 import { updateProfile } from "firebase/auth";
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { auth } from "../lib/firebase";
+import { useViewTransition } from "../utils/transition/useViewTransition";
 
 export default function UserName() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const viewTransition = useViewTransition();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -17,7 +17,7 @@ export default function UserName() {
     }
     updateProfile(auth.currentUser!, { displayName: name })
       .then(() => {
-        navigate("/todos");
+        viewTransition("/todos");
       })
       .catch((error: FirebaseError) => {
         setError("Error occured.");
@@ -44,7 +44,7 @@ export default function UserName() {
           </button>
           <button
             className={`w-full py-3 px-5 my-2 mx-auto block bg-[#fffb85] text-[var(--bgcolor)] hover:bg-[var(--font)] hover:tracking-[1px] transition-all duration-150`}
-            onClick={() => navigate("/todos")}>
+            onClick={() => viewTransition("/todos")}>
             I'll do that later.
           </button>
         </div>

@@ -7,8 +7,8 @@ import {
 import { collection, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { auth, db } from "../lib/firebase";
+import { useViewTransition } from "../utils/transition/useViewTransition";
 
 export default function Signup() {
   const {
@@ -19,7 +19,7 @@ export default function Signup() {
   } = useForm({ defaultValues: { email: "", password: "" } });
   const [email, password] = [watch("email"), watch("password")];
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const viewTransition = useViewTransition();
 
   const pattern = {
     email: {
@@ -43,7 +43,7 @@ export default function Signup() {
       const user = await signInWithEmailAndPassword(auth, email, password);
       if (!user.user.emailVerified) {
         await sendEmailVerification(user.user);
-        navigate("/signup/sent-email");
+        viewTransition("/signup/sent-email");
       }
       const uid = user.user.uid;
       await setDoc(doc(collection(db, "users"), uid), { todos: [] });

@@ -1,47 +1,40 @@
-import { format } from "date-fns";
-import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { db } from "../../lib/firebase";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Unfinished } from "../../types/props/todos/unfinished";
+import { useViewTransition } from "../../utils/transition/useViewTransition";
+import TodoDeleteButton from "./button/TodoDeleteButton";
+import TodoFinishButton from "./button/TodoFinishButtton";
+import TodoModal from "./modal/TodoModal";
+import UnfinishedTodoStatus from "./status/UnfinishedTodoStatus";
 
 export default function UnfinishedTodo({ todo }: Unfinished) {
-  const { name, createdAt } = todo;
-  const { user } = useAuthContext();
-  const handleTaskDelete = (_id?: string) => {
-    if (!_id) return;
-    deleteDoc(doc(db, `users/${user?.uid}/todos`, _id));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const viewTransition = useViewTransition();
+  const navigate = useNavigate();
+
+  const handleTodoModalOpen = () => {
+    navigate(`/todos#${todo.id}`);
+    setIsModalOpen(true);
   };
 
-  const handleClick = (_id?: string) => {
-    if (!_id) return;
-    updateDoc(doc(db, `users/${user?.uid}/todos`, _id), {
-      done: true,
-      updatedAt: serverTimestamp(),
-    });
+  const handleClose = () => {
+    setIsModalOpen(false);
   };
+
   return (
     <li
-      className={`flex flex-wrap justify-between flex-col md:items-center md:flex-row`}>
-      <div className='w-full md:w-[60%]'>
-        <p className='px-5 py-2 w-full break-words'>{name}</p>
-        <p className='px-5 py-2 w-full break-words'>{`Added at: ${
-          createdAt
-            ? format(createdAt.toDate(), "yyyy-MM-dd, HH:mm:ss")
-            : "Cannot read."
-        }`}</p>
+      className={`animate-fadein overflow-hidden w-full h-[130px] md:h-[80px] flex flex-wrap justify-between flex-col md:items-center hover:bg-[var(--bgcolor)] hover:text-[var(--font)] cursor-pointer`}>
+      <UnfinishedTodoStatus todo={todo} onClick={handleTodoModalOpen} />
+      <div className='h-[45px] md:h-full w-full md:w-[40%] flex flex-row items-center'>
+        <TodoFinishButton todo={todo} />
+        <TodoDeleteButton todo={todo} />
       </div>
-      <div className='h-full min-h-[30px] w-full md:w-[40%] flex flex-row items-center'>
-        <button
-          className='w-[50%] bg-[#56cb2f]'
-          onClick={() => handleClick(todo.id)}>
-          ✔︎
-        </button>
-        <button
-          className='bg-[#ff3892] w-[50%]'
-          onClick={() => handleTaskDelete(todo.id)}>
-          X
-        </button>
-      </div>
+      <TodoModal
+        todo={todo}
+        open={isModalOpen}
+        onClose={handleClose}
+        status='yet'
+      />
     </li>
   );
 }

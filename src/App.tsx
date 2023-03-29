@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import AuthProvider from "./components/provider/auth/AuthProvider";
-import { useAuthContext } from "./hooks/useAuthContext";
 import Exit from "./pages/Exit";
 import Forgot from "./pages/Forgot";
 import Home from "./pages/Home";
@@ -12,7 +11,6 @@ import Signup from "./pages/Signup";
 import Todos from "./pages/Todos";
 
 export default function App() {
-  const { user } = useAuthContext();
   return (
     <AuthProvider>
       <BrowserRouter>

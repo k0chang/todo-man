@@ -2,17 +2,17 @@ import { FirebaseError } from "firebase/app";
 import { deleteUser } from "firebase/auth";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { db } from "../../lib/firebase";
 import { AccountDeleteModalT } from "../../types/props/profile/accountdelete";
+import { useViewTransition } from "../../utils/transition/useViewTransition";
 
 export default function AccountDeleteModal({
   openState: [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen],
 }: AccountDeleteModalT) {
   const [error, setError] = useState("");
   const { user } = useAuthContext();
-  const navigate = useNavigate();
+  const viewTransition = useViewTransition();
 
   function handleClose() {
     setIsAccountDeleteModalOpen(false);
@@ -25,7 +25,7 @@ export default function AccountDeleteModal({
     try {
       await deleteDoc(doc(db, `users/${user.uid}`));
       await deleteUser(user).then(() => {
-        navigate("/exit");
+        viewTransition("/exit");
         setIsAccountDeleteModalOpen(false);
       });
     } catch (e) {

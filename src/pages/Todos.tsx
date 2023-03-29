@@ -37,7 +37,7 @@ export default function Todos() {
       b.createdAt instanceof Timestamp ? b.createdAt.toDate() : b.createdAt;
     return dateB.getTime() - dateA.getTime();
   });
-  const unfinishedTodos = [...sortedTodos].filter(todo => !todo.done);
+  const unfinishedTodos = [...sortedTodos].filter(todo => !todo.done).reverse();
   const finishedTodos = [...sortedTodos]
     .filter(todo => todo.done)
     .sort((a, b) => {

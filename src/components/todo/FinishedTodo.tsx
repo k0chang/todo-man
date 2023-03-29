@@ -1,33 +1,38 @@
-import { format } from "date-fns";
-import { doc, updateDoc } from "firebase/firestore";
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { db } from "../../lib/firebase";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Finished } from "../../types/props/todos/finished";
+import { useViewTransition } from "../../utils/transition/useViewTransition";
+import TodoDeleteButton from "./button/TodoDeleteButton";
+import TodoRestoreButton from "./button/TodoRestoreButton";
+import TodoModal from "./modal/TodoModal";
+import FinishedTodoStatus from "./status/FinishedTodoStatus";
 
 export default function FinishedTodo({ todo }: Finished) {
-  const { name, updatedAt } = todo;
-  const { user } = useAuthContext();
-  const handleMakeUnfinished = (id?: string) => {
-    if (!id) return;
-    updateDoc(doc(db, `users/${user?.uid}/todos`, id), {
-      done: false,
-    });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const viewTransition = useViewTransition();
+  const navigate = useNavigate();
+
+  const handleTodoModalOpen = () => {
+    setIsModalOpen(true);
+    navigate(`/todos#${todo.id}`);
+  };
+  const onClose = () => {
+    setIsModalOpen(false);
   };
   return (
-    <li className={`flex items-center`}>
-      <div className='w-[70%]'>
-        <p className='px-5 py-2 break-words'>{name}</p>
-        <p className='px-5 py-2 w-full break-words'>{`Finished at: ${
-          updatedAt
-            ? format(updatedAt.toDate(), "yyyy-MM-dd, HH:mm:ss")
-            : "Cannot read."
-        }`}</p>
+    <li
+      className={`animate-fadein overflow-hidden w-full h-[130px] md:h-[80px] flex flex-wrap justify-between flex-col md:items-center hover:bg-[var(--bgcolor)] hover:text-[var(--font)] cursor-pointer`}>
+      <FinishedTodoStatus todo={todo} onClick={handleTodoModalOpen} />
+      <div className='h-[45px] md:h-full w-full md:w-[40%] flex flex-row items-center'>
+        <TodoRestoreButton todo={todo} />
+        <TodoDeleteButton todo={todo} />
       </div>
-      <button
-        className='bg-[#f952ff] h-full w-[30%] break-words text-[22px]'
-        onClick={() => handleMakeUnfinished(todo.id)}>
-        ↑
-      </button>
+      <TodoModal
+        todo={todo}
+        open={isModalOpen}
+        onClose={onClose}
+        status='finished'
+      />
     </li>
   );
 }

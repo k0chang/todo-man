@@ -63,3 +63,80 @@ input::selection {
 input:focus {
   outline: none;
 }
+
+.menu {
+  view-transition-name: menu;
+}
+
+.bodie {
+  view-transition-name: bodie;
+}
+
+.task-modal {
+  view-transition-name: task-modal;
+}
+
+.back-screen {
+  view-transition-name: back-screen;
+}
+
+::view-transition-old(bodie),
+::view-transition-new(bodie) {
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+  -webkit-animation-duration: .5s;
+          animation-duration: .5s;
+  mix-blend-mode: plus-lighter;
+}
+
+::view-transition-new(bodie) {
+  transform-origin: right center;
+  -webkit-animation-name: slide-new;
+          animation-name: slide-new;
+}
+
+::view-transition-old(bodie) {
+  transform-origin: left center;
+  -webkit-animation-name: slide-old;
+          animation-name: slide-old;
+}
+
+@-webkit-keyframes slide-new {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  } to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-new {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  } to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes slide-old {
+  from {
+    transform: scaleX(1);
+    opacity: 1;
+  } to {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-old {
+  from {
+    transform: scaleX(1);
+    opacity: 1;
+  } to {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}

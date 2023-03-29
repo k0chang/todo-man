@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import AccountDeleteModal from "../components/profile/AccountDeleteModal";
 import Editor from "../components/profile/Editor";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useViewTransition } from "../utils/transition/useViewTransition";
 
 export default function Profile() {
   const { user } = useAuthContext();
@@ -17,6 +18,7 @@ export default function Profile() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] =
     useState(false);
+  const viewTransition = useViewTransition();
 
   useEffect(() => {
     setUsername(user?.displayName ?? "");
@@ -50,17 +52,15 @@ export default function Profile() {
         </li>
       </ul>
       <button
-        className='outline-none border-transparent focus:border-[#ff47f9] hover:border-[#ff47f9] border-2 p-4 bg-[var(--font)] text-[var(--bgcolor)] rounded-md mb-7'
+        className='outline-none border-transparent focus:border-[#ff47f9] hover:border-[#ff47f9] border-2 p-4 bg-[var(--font)] text-[var(--bgcolor)] rounded-md mb-7 mr-4'
         onClick={handleOpen}>
         <FontAwesomeIcon icon={faPenToSquare} /> Edit profile
       </button>
-      <div>
-        <a
-          href='/todos'
-          className='outline-none focus:border-[#ff47f9] hover:border-[#ff47f9] p-4 border-[3px] border-[var(--font)] rounded-md mb-5'>
-          <FontAwesomeIcon icon={faHandPointLeft} /> Back to TODO Man
-        </a>
-      </div>
+      <button
+        onClick={() => viewTransition("/todos")}
+        className='outline-none focus:border-[#ff47f9] hover:border-[#ff47f9] p-4 border-[3px] border-[var(--font)] rounded-md mb-5'>
+        <FontAwesomeIcon icon={faHandPointLeft} /> Back to TODO Man
+      </button>
       <div className='w-full flex justify-end'>
         <button
           className='outline-none focus:border-[#ff47f9] hover:border-[#ff47f9] p-2 border-[1px] border-[var(--danger)] text-[var(--danger)] mt-[79px] mb-5'

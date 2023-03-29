@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div className={`relative mt-8 h-[120px] w-full flex`}>
+      <div className={`menu z-10 relative mt-8 h-[120px] w-full flex`}>
         <Menu user={user} />
         <LogoutButton
           show={
@@ -20,8 +20,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         />
         <LoginButton show={!!!user} />
       </div>
-      <div className='w-full h-screen flex justify-center items-center'>
-        <div className='w-[80%] max-w-[680px] h-full mb-10'>{children}</div>
+      <div className='bodie w-full h-screen flex justify-center items-center mb-[180px]'>
+        <div className='w-[80%] max-w-[680px] h-full'>{children}</div>
       </div>
     </>
   );

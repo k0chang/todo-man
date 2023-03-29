@@ -1,15 +1,15 @@
-import { useNavigate } from "react-router-dom";
 import { CommonButton } from "../../../types/props/common/button";
+import { useViewTransition } from "../../../utils/transition/useViewTransition";
 
 export default function LoginButton({ show }: CommonButton) {
-  const navigate = useNavigate();
+  const viewTransition = useViewTransition();
 
   return (
     <button
       className={`${
         !show ? "hidden" : ""
       } absolute right-0 mr-3 w-[80px] py-3 border-[var(--font)] border-2`}
-      onClick={() => navigate("/")}>
+      onClick={() => viewTransition("/")}>
       Login
     </button>
   );
